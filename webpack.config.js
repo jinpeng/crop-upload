@@ -6,7 +6,7 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
     template: './src/index.html',
     filename: 'index.html',
     inject: 'body'
-})
+});
 
 module.exports = {
     entry: {
@@ -25,7 +25,7 @@ module.exports = {
                     'style-loader',
                     {
                         loader: 'css-loader',
-                        options: { modules: true },
+                        options: { modules: false },
                     }
                 ],
             },

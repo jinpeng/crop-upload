@@ -1,18 +1,15 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import styles from './app.css';
+import 'antd/dist/antd.css';
+import CropUpload from './CropUpload';
+
 
 export default class App extends React.Component {
   render() {
     return (
         <div id="app">
-            <h1>React + Webpack 3 HMR + React Hot Loader 4</h1>
-            <p>
-                Test HMR by adding text into the text area below and
-                then adding/removing/changing text/css/elements on this page.
-                Changes should be reflected without browser refresh whilst keeping the text
-                in the textarea unchanged (maintaining the state).
-            </p>
-            <textarea/>
+            <CropUpload />
         </div>
     );
   }
