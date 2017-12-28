@@ -4123,6 +4123,10 @@ react-dom@^16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
+react-fetch-progressbar@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/react-fetch-progressbar/-/react-fetch-progressbar-0.0.3.tgz#6db010ee15659b4c5892294e010e266c457d0be5"
+
 react-hot-loader@^4.0.0-beta.6:
   version "4.0.0-beta.6"
   resolved "https://registry.yarnpkg.com/react-hot-loader/-/react-hot-loader-4.0.0-beta.6.tgz#8a32e3ae4291ad42187212ca9ffa5f1d763d0692"

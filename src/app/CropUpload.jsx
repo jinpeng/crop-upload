@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import 'cropperjs/dist/cropper.css';
 
 import ReactCropper from './react-cropper';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
+import { progressBarFetch, setOriginalFetch, ProgressBar } from 'react-fetch-progressbar';
 
 /* global FileReader */
 
@@ -23,6 +24,17 @@ export default class CropUpload extends Component {
     this.useDefaultImage = this.useDefaultImage.bind(this);
     this.getUptoken = this.getUptoken.bind(this);
     this.uploadBase64ImgToQiniu = this.uploadBase64ImgToQiniu.bind(this);
+  }
+
+  componentDidMount() {
+    // Let react-fetch-progressbar know what the original fetch is.
+    setOriginalFetch(window.fetch);
+
+    /* 
+      Now override the fetch with progressBarFetch, so the ProgressBar
+      knows how many requests are currently active.
+    */
+    window.fetch = progressBarFetch;
   }
 
   onChange(e) {
@@ -64,12 +76,14 @@ export default class CropUpload extends Component {
     fetch('http://qiniubackend.com:8080/uptoken', options).then(response => response.json())
       .then(data => {
         console.log(data);
+        message.success('Got upload token.');
         this.setState({
           uptoken: data.token
           });
       })
       .catch(error => {
         console.log('Oops, error: ', error);
+        message.error('Failed to get upload token.');
         })
   }
 
@@ -90,12 +104,14 @@ export default class CropUpload extends Component {
     fetch(url, options).then(response => response.json())
       .then(data => {
         console.log(data);
+        message.success('Upload to Qiniu succeeded!');
         this.setState({
           uploadedFile: data.key
           });        
       })
       .catch(error => {
         console.log('Oops, error: ', error);
+        message.error('Failed upload to Qiniu.');
         })
   }
 
@@ -136,7 +152,6 @@ export default class CropUpload extends Component {
             <Button type="primary" onClick={this.useDefaultImage}>Use default img</Button>
           </div>
           <br />
-          <br />
           <ReactCropper
             style={{ height: 400, width: '100%' }}
             aspectRatio={4 / 3}
@@ -160,6 +175,11 @@ export default class CropUpload extends Component {
               <Button type="primary" onClick={this.getUptoken} style={{ float: 'right' }}>Update Token</Button>
               <Button type="primary" onClick={this.cropImage} style={{ float: 'right' }}>Crop</Button>
             </div>
+            <br />
+            <div>
+              <ProgressBar />
+            </div>
+            <br />
             <div>
               <img style={{ width: '100%' }} src={this.state.cropResult} alt="cropped image" />
             </div>
