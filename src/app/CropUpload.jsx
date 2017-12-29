@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import 'cropperjs/dist/cropper.css';
 
 import ReactCropper from './react-cropper';
-import { Button, Menu, Dropdown, Icon, message } from 'antd';
+import { Button, Menu, Dropdown, Icon, Upload, message } from 'antd';
 import { progressBarFetch, setOriginalFetch, ProgressBar } from 'react-fetch-progressbar';
 
 const ButtonGroup = Button.Group;
 const src = 'img/child.jpg';
+const noCrop = 'img/nocrop.png';
 
 export default class CropUpload extends Component {
 
@@ -15,7 +16,7 @@ export default class CropUpload extends Component {
     this.state = {
       src,
       ratio: 4 / 3,
-      cropResult: null,
+      cropResult: noCrop,
       uptoken: null,
       uploadedFile: null,
     };
@@ -150,6 +151,7 @@ export default class CropUpload extends Component {
         </div>
         <div style={{ width: '100%' }}>
           <div>
+          <ButtonGroup>
             <input type="file" onChange={this.onChange} />
             <Button type="primary" onClick={this.useDefaultImage}>Use default img</Button>
             <Dropdown overlay={ratioMenu}>
@@ -157,14 +159,15 @@ export default class CropUpload extends Component {
                 Ratio <Icon type="down" />
               </Button>
             </Dropdown>
+          </ButtonGroup>
           </div>
-          <br />
           <ReactCropper
             style={{ height: 400, width: '100%' }}
             aspectRatio={this.state.ratio}
             preview=".img-preview"
-            guides={false}
+            guides={true}
             src={this.state.src}
+            background={true}
             ref={cropper => { this.cropper = cropper; }}
           />
         </div>
@@ -174,10 +177,10 @@ export default class CropUpload extends Component {
             <div className="img-preview" style={{ width: '100%', float: 'left', height: 300 }} />
           </div>
           <div className="box" style={{ width: '50%', float: 'right' }}>
-            <h1>
-              <span>Crop</span>
-            </h1>
-            <div>
+            <div style={{ float: 'left' }}>
+              <h1>Crop</h1>
+            </div>
+            <div style={{ float: 'right' }}>
               <ButtonGroup style={{ float: 'right' }}>
                 <Button type="primary" icon="picture" onClick={this.cropImage}>Crop</Button>
                 <Button type="primary" icon="sync" onClick={this.getUptoken}>UpToken</Button>
@@ -186,7 +189,7 @@ export default class CropUpload extends Component {
             </div>
             <br />
             <div>
-              <img style={{ width: '100%' }} src={this.state.cropResult} alt="cropped image" />
+              <img style={{ width:'100%', border:'1px solid #021a40' }} src={this.state.cropResult} alt="cropped image" />
             </div>
           </div>
         </div>
