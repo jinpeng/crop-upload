@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import 'cropperjs/dist/cropper.css';
 
 import ReactCropper from './react-cropper';
-import { Button, Menu, Dropdown, Icon, Upload, message } from 'antd';
+import { Button, Card, Menu, Dropdown, Icon, Upload, Modal, message } from 'antd';
 import { progressBarFetch, setOriginalFetch, ProgressBar } from 'react-fetch-progressbar';
 
+const { Meta } = Card;
 const ButtonGroup = Button.Group;
 const src = 'img/child.jpg';
 const noCrop = 'img/nocrop.png';
@@ -26,6 +27,7 @@ export default class CropUpload extends Component {
     this.useDefaultImage = this.useDefaultImage.bind(this);
     this.getUptoken = this.getUptoken.bind(this);
     this.uploadBase64ImgToQiniu = this.uploadBase64ImgToQiniu.bind(this);
+    this.showImage = this.showImage.bind(this);
   }
 
   componentDidMount() {
@@ -136,6 +138,27 @@ export default class CropUpload extends Component {
     });
   }
 
+  showImage() {
+    var url = QINIU_IMAGE_URL_PREFIX + this.state.uploadedFile;
+    Modal.success({
+      title: 'Image just uploaded to Qiniu',
+      width: '50%',
+      content: (
+        <Card
+          hoverable
+          style={{ width: '100%' }}
+          cover={<img alt="image on qiniu" src={url} />}
+        >
+          <Meta
+            title="Image just uploaded"
+            description={url}
+          />
+        </Card>
+      ),
+      onOk() {},
+    });
+  }
+
   render() {
     const ratioMenu = (
       <Menu onClick={ this.changeRatio }>
@@ -186,6 +209,7 @@ export default class CropUpload extends Component {
                 <Button type="primary" icon="picture" onClick={this.cropImage}>Crop</Button>
                 <Button type="primary" icon="sync" onClick={this.getUptoken}>UpToken</Button>
                 <Button type="primary" icon="cloud-upload-o" onClick={this.uploadBase64ImgToQiniu}>Upload</Button>
+                <Button type="primary" icon="cloud" onClick={this.showImage}>Show</Button>
               </ButtonGroup>
             </div>
             <br />

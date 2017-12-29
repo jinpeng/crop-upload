@@ -36,7 +36,8 @@ Modify server URL in webpack.config.js
 
 ```
 new webpack.DefinePlugin({
-    QINIU_UPTOKEN_URL: process.env.ENV === 'dev' ? '"http://localhost:8000/uptoken"' : '"http://qiniubackend.com:8080/uptoken"'
+    QINIU_UPTOKEN_URL: process.env.ENV === 'dev' ? '"http://localhost:8000/uptoken"' : '"http://qiniubackend.com:8080/uptoken"',
+    QINIU_IMAGE_URL_PREFIX: '"http://jitu.qiniudn.com/"'
 })
 ```
 
@@ -58,6 +59,7 @@ Open browser and point to http://qiniubackend.com:8080/index.html.
 - Crop: generate cropped image
 - UpToken: get updated Qiniu upload token on first time and when neccessary
 - Upload: upload generated cropped image to Qiniu cloud bucket, the bucket is set in crop-upload-server
+- Show: display image from Qiniu to verify
 
 
 

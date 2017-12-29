@@ -36,7 +36,8 @@ module.exports = {
         new webpack.NamedModulesPlugin(),
         new CleanWebpackPlugin(['dist']),
         new webpack.DefinePlugin({
-            QINIU_UPTOKEN_URL: process.env.ENV === 'dev' ? '"http://localhost:8000/uptoken"' : '"http://qiniubackend.com:8080/uptoken"'
+            QINIU_UPTOKEN_URL: process.env.ENV === 'dev' ? '"http://localhost:8000/uptoken"' : '"http://qiniubackend.com:8080/uptoken"',
+            QINIU_IMAGE_URL_PREFIX: '"http://jitu.qiniudn.com/"'
         })
     ],
     resolve: {
