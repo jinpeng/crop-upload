@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import 'cropperjs/dist/cropper.css';
 
 import ReactCropper from './react-cropper';
-import { Button, message } from 'antd';
+import { Button, Icon, message } from 'antd';
 import { progressBarFetch, setOriginalFetch, ProgressBar } from 'react-fetch-progressbar';
 
-/* global FileReader */
-
+const ButtonGroup = Button.Group;
 const src = 'img/child.jpg';
 
 export default class CropUpload extends Component {
@@ -79,12 +78,12 @@ export default class CropUpload extends Component {
         message.success('Got upload token.');
         this.setState({
           uptoken: data.token
-          });
+        });
       })
       .catch(error => {
         console.log('Oops, error: ', error);
         message.error('Failed to get upload token.');
-        })
+      });
   }
 
   uploadBase64ImgToQiniu() {
@@ -101,51 +100,35 @@ export default class CropUpload extends Component {
       body: img
     };
 
-    fetch(url, options).then(response => response.json())
-      .then(data => {
-        console.log(data);
+    fetch(url, options).then(response => {
+      if (response.ok) {
         message.success('Upload to Qiniu succeeded!');
+        return response.json();
+      } else if (response.status == 401) {
+        message.error('No permission, please get updated uptoken.');
+        Promise.reject(response.json());
+      } else {
+        Promise.reject(response.json());
+      }
+    })
+    .then(data => {
+        console.log(data);
         this.setState({
           uploadedFile: data.key
-          });        
-      })
-      .catch(error => {
-        console.log('Oops, error: ', error);
-        message.error('Failed upload to Qiniu.');
-        })
+        });        
+    })
+    .catch(error => {
+      console.log('Oops, error: ', error);
+      message.error('Failed upload to Qiniu: ', error);
+    });
   }
-
-//  getUptoken() {
-//    const _this = this;
-//    var xhr = new XMLHttpRequest();
-//    xhr.onreadystatechange = function(){
-//      if (xhr.readyState==4){
-//        console.log(xhr.responseText)
-//        var obj = JSON.parse(xhr.responseText);
-//        _this.setState({
-//          uptoken: obj.token
-//        });
-//      }
-//    }
-//    xhr.open("GET", "http://qiniubackend.com:8080/uptoken", true);
-//    xhr.send();
-//  }
-
-//  uploadBase64ImgToQiniu() {
-//    var url = "http://up.qiniu.com/putb64/-1"; 
-//    var xhr = new XMLHttpRequest();
-//    var img = this.state.cropResult.slice(22);
-//    var auth = "UpToken " + this.state.uptoken;
-
-//    xhr.open("POST", url, true);
-//    xhr.setRequestHeader("Content-Type", "application/octet-stream");
-//    xhr.setRequestHeader("Authorization", auth);
-//    xhr.send(img);
-//  }
 
   render() {
     return (
       <div>
+        <div style={{ width: '100%' }}>
+          <ProgressBar />
+        </div>
         <div style={{ width: '100%' }}>
           <div>
             <input type="file" onChange={this.onChange} />
@@ -171,14 +154,13 @@ export default class CropUpload extends Component {
               <span>Crop</span>
             </h1>
             <div>
-              <Button type="primary" onClick={this.uploadBase64ImgToQiniu} style={{ float: 'right' }}>Upload</Button>
-              <Button type="primary" onClick={this.getUptoken} style={{ float: 'right' }}>Update Token</Button>
-              <Button type="primary" onClick={this.cropImage} style={{ float: 'right' }}>Crop</Button>
+              <ButtonGroup style={{ float: 'right' }}>
+                <Button type="primary" onClick={this.cropImage}>Crop</Button>
+                <Button type="primary" onClick={this.getUptoken}>Update Token</Button>
+                <Button type="primary" onClick={this.uploadBase64ImgToQiniu}>Upload</Button>
+              </ButtonGroup>
             </div>
             <br />
-            <div>
-              <ProgressBar />
-            </div>
             <br />
             <div>
               <img style={{ width: '100%' }} src={this.state.cropResult} alt="cropped image" />
