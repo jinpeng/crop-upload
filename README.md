@@ -11,7 +11,8 @@ Should be used together with [crop-upload-server](https://github.com/jinpeng/cro
 - Upload progress bar and notification
 
 ### For Developers
-####Techniques:
+
+#### Techniques:
 - ReactJS 16
 - Webpack 3
 - React Hot Loader 4 beta
@@ -39,7 +40,7 @@ new webpack.DefinePlugin({
 })
 ```
 
-###For End Users
+### For End Users
 - Choose File: open image to edit
 - Use default img: open default image for edit
 - Ratio: select preset aspect ratio
