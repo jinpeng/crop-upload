@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import 'cropperjs/dist/cropper.css';
 
 import ReactCropper from './react-cropper';
-import { Button, Icon, message } from 'antd';
+import { Button, Menu, Dropdown, Icon, message } from 'antd';
 import { progressBarFetch, setOriginalFetch, ProgressBar } from 'react-fetch-progressbar';
 
 const ButtonGroup = Button.Group;
@@ -14,12 +14,14 @@ export default class CropUpload extends Component {
     super(props);
     this.state = {
       src,
+      ratio: 4 / 3,
       cropResult: null,
       uptoken: null,
       uploadedFile: null,
     };
     this.cropImage = this.cropImage.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.changeRatio = this.changeRatio.bind(this);
     this.useDefaultImage = this.useDefaultImage.bind(this);
     this.getUptoken = this.getUptoken.bind(this);
     this.uploadBase64ImgToQiniu = this.uploadBase64ImgToQiniu.bind(this);
@@ -49,6 +51,14 @@ export default class CropUpload extends Component {
       this.setState({ src: reader.result });
     };
     reader.readAsDataURL(files[0]);
+  }
+
+  changeRatio(e) {
+    const keyRatioMap = {"1":4/3, "2":16/9, "3":16/10};
+    var aspectRatio = keyRatioMap[e.key];
+    this.setState({
+      ratio: aspectRatio
+    });
   }
 
   cropImage() {
@@ -87,7 +97,8 @@ export default class CropUpload extends Component {
   }
 
   uploadBase64ImgToQiniu() {
-    var url = "http://up.qiniu.com/putb64/-1"; 
+    var url = "http://up.qiniu.com/putb64/-1";
+    // strip off the starting substring of base64 encoding
     var img = this.state.cropResult.slice(22);
     var auth = "UpToken " + this.state.uptoken;
     var options = {
@@ -115,7 +126,7 @@ export default class CropUpload extends Component {
         console.log(data);
         this.setState({
           uploadedFile: data.key
-        });        
+        });
     })
     .catch(error => {
       console.log('Oops, error: ', error);
@@ -124,6 +135,14 @@ export default class CropUpload extends Component {
   }
 
   render() {
+    const ratioMenu = (
+      <Menu onClick={ this.changeRatio }>
+        <Menu.Item key="1">4:3</Menu.Item>
+        <Menu.Item key="2">16:9</Menu.Item>
+        <Menu.Item key="3">16:10</Menu.Item>
+      </Menu>
+    );
+
     return (
       <div>
         <div style={{ width: '100%' }}>
@@ -133,11 +152,16 @@ export default class CropUpload extends Component {
           <div>
             <input type="file" onChange={this.onChange} />
             <Button type="primary" onClick={this.useDefaultImage}>Use default img</Button>
+            <Dropdown overlay={ratioMenu}>
+              <Button type="primary">
+                Ratio <Icon type="down" />
+              </Button>
+            </Dropdown>
           </div>
           <br />
           <ReactCropper
             style={{ height: 400, width: '100%' }}
-            aspectRatio={4 / 3}
+            aspectRatio={this.state.ratio}
             preview=".img-preview"
             guides={false}
             src={this.state.src}
@@ -155,12 +179,11 @@ export default class CropUpload extends Component {
             </h1>
             <div>
               <ButtonGroup style={{ float: 'right' }}>
-                <Button type="primary" onClick={this.cropImage}>Crop</Button>
-                <Button type="primary" onClick={this.getUptoken}>Update Token</Button>
-                <Button type="primary" onClick={this.uploadBase64ImgToQiniu}>Upload</Button>
+                <Button type="primary" icon="picture" onClick={this.cropImage}>Crop</Button>
+                <Button type="primary" icon="sync" onClick={this.getUptoken}>UpToken</Button>
+                <Button type="primary" icon="cloud-upload-o" onClick={this.uploadBase64ImgToQiniu}>Upload</Button>
               </ButtonGroup>
             </div>
-            <br />
             <br />
             <div>
               <img style={{ width: '100%' }} src={this.state.cropResult} alt="cropped image" />
