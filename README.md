@@ -40,6 +40,17 @@ new webpack.DefinePlugin({
 })
 ```
 
+Deploy to production environment:
+
+```
+$ yarn build
+$ cp dist/* /usr/local/var/www/
+$ cp src/img/* /usr/local/var/www/img/
+```
+Here the folder /usr/local/var/www/ is nginx web root folder.  
+Configure nginx and run it.  
+Open browser and point to http://qiniubackend.com:8080/index.html.
+
 ### For End Users
 - Choose File: open image to edit
 - Use default img: open default image for edit
