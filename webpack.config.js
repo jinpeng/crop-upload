@@ -34,7 +34,10 @@ module.exports = {
     plugins: [
         HtmlWebpackPluginConfig,
         new webpack.NamedModulesPlugin(),
-        new CleanWebpackPlugin(['dist'])
+        new CleanWebpackPlugin(['dist']),
+        new webpack.DefinePlugin({
+            QINIU_UPTOKEN_URL: process.env.ENV === 'dev' ? '"http://localhost:8000/uptoken"' : '"http://qiniubackend.com:8080/uptoken"'
+        })
     ],
     resolve: {
 		extensions: ['.js', '.jsx']

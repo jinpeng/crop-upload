@@ -83,7 +83,8 @@ export default class CropUpload extends Component {
       }
     };
 
-    fetch('http://qiniubackend.com:8080/uptoken', options).then(response => response.json())
+    console.log(QINIU_UPTOKEN_URL);
+    fetch(QINIU_UPTOKEN_URL, options).then(response => response.json())
       .then(data => {
         console.log(data);
         message.success('Got upload token.');

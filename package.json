@@ -6,8 +6,8 @@
   "author": "Dong Jinpeng",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --colors --hot",
-    "build": "webpack"
+    "start": "ENV=dev webpack-dev-server --colors --hot",
+    "build": "ENV=production webpack"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
